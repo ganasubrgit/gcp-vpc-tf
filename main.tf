@@ -56,7 +56,7 @@ resource "google_compute_instance" "vm-ins-01" {
   }
 
   scheduling {
-        preemptible = false
+        preemptible = true
         on_host_maintenance = "MIGRATE"
         automatic_restart = true
   }
