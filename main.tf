@@ -41,7 +41,7 @@ resource "google_compute_firewall" "firewall" {
 // VM instance configuration
 resource "google_compute_instance" "vm-ins-01" {
   name         = "${var.image}"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-1"
   depends_on    = ["google_compute_subnetwork.subnet"]
 
   boot_disk {
@@ -54,8 +54,8 @@ resource "google_compute_instance" "vm-ins-01" {
     subnetwork = "${google_compute_network.vpc.name}"
     access_config {}
   }
-//----------------------------Script up script-------------------------
+//----------------------------Startup script---------------------------
   metadata_startup_script = "${file("startup-script.sh")}"
 //---------------------------------------------------------------------
-
+allow_stopping_for_update = true
 }
