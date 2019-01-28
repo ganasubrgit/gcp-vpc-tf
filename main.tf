@@ -54,4 +54,8 @@ resource "google_compute_instance" "vm-ins-01" {
     subnetwork = "${google_compute_network.vpc.name}"
     access_config {}
   }
+//----------------------------Script up script-------------------------
+  metadata_startup_script = "${file("startup-script.sh")}"
+//---------------------------------------------------------------------
+
 }
