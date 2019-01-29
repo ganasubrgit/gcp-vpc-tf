@@ -58,4 +58,5 @@ resource "google_compute_instance" "vm-ins-01" {
   metadata_startup_script = "${file("startup-script.sh")}"
 //---------------------------------------------------------------------
 allow_stopping_for_update = true
+count = 2
 }
