@@ -1,7 +1,7 @@
 // Configure the Google Cloud provider
 provider "google" {
  credentials = "${file("${var.credentials}")}"
- project     = "${var.gcp_project}" 
+ project     = "${var.project_name}" 
  region      = "${var.region}"
  zone         = "${var.zone}"
 }
@@ -10,7 +10,7 @@ provider "google" {
 resource "google_compute_network" "vpc" {
  name                    = "${var.name}-vpc"
  auto_create_subnetworks = "false"
- //project                 = "gansnew"
+ project                 = "${var.project_name}"
 }
 
 // Create Subnet
@@ -21,10 +21,10 @@ resource "google_compute_subnetwork" "subnet" {
  depends_on    = ["google_compute_network.vpc"]
  region      = "${var.region}"
 }
+
 // VPC firewall configuration
 resource "google_compute_firewall" "firewall" {
   name    = "${var.name}-firewall"
-  //project = "${google_compute_network.vpc.project}"
   network = "${google_compute_network.vpc.name}"
   
   allow {
@@ -35,28 +35,30 @@ resource "google_compute_firewall" "firewall" {
     protocol = "tcp"
     ports    = ["22", "80"]
   }
-
   source_ranges = ["0.0.0.0/0"]
 }
+
 // VM instance configuration
-resource "google_compute_instance" "vm-ins-01" {
-  name         = "${var.image}"
-  machine_type = "n1-standard-1"
-  depends_on    = ["google_compute_subnetwork.subnet"]
+# resource "google_compute_instance" "vm-ins-01" {
+#   name         = "instance-${count.index}"
+#   machine_type = "${var.machine_type}"
+#   depends_on    = ["google_compute_subnetwork.subnet"]
 
-  boot_disk {
-    initialize_params {
-      image = "${var.image}"
-    }
-  }
+#   boot_disk {
+#     initialize_params {
+#       image = "${var.image}"
+#     }
+#   }
 
-  network_interface {
-    subnetwork = "${google_compute_network.vpc.name}"
-    access_config {}
-  }
-//----------------------------Startup script---------------------------
-  metadata_startup_script = "${file("startup-script.sh")}"
-//---------------------------------------------------------------------
-allow_stopping_for_update = true
-count = 2
-}
+#   network_interface {
+#     subnetwork = "${google_compute_network.vpc.name}"
+#     access_config {}
+#   }
+# //----------------------------Startup script---------------------------
+#   metadata_startup_script = "${file("startup-script.sh")}"
+# //---------------------------------------------------------------------
+# allow_stopping_for_update = true
+# count = "${var.node_count}"
+# }
+
+
